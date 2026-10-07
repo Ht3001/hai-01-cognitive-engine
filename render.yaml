@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: hai-01-cognitive-engine
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: ALLOWED_ORIGINS
+        value: https://ht3001.com,https://www.ht3001.com,https://hai.ht3001.com,https://app.ht3001.com,http://localhost:8000
