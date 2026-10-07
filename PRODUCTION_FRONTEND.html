@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HAI-01: Espejo Cognitivo & Autonomía Metacognitiva - Interfaz Web Universal">
+  <title>HAI-01 | Human Awakening Interface</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: #161e2e;
+      --text-color: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-color: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.15);
+      --border-color: #243044;
+      --error-color: #f87171;
+      --success-color: #4ade80;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem;
+    }
+
+    header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--accent-color);
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .status-badge {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: rgba(74, 222, 128, 0.1);
+      color: var(--success-color);
+      border: 1px solid var(--success-color);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      transition: border-color 0.3s ease;
+    }
+
+    .card:hover {
+      border-color: var(--accent-color);
+    }
+
+    .card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--accent-color);
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--text-color);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      background: #0b0f19;
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      transition: all 0.3s ease;
+    }
+
+    textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    select,
+    button {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    select {
+      background: #0b0f19;
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      flex: 1;
+      min-width: 200px;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    button {
+      background: var(--accent-color);
+      color: #0b0f19;
+      border: none;
+      font-weight: 700;
+    }
+
+    button:hover {
+      opacity: 0.85;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(56, 189, 248, 0.2);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .loading {
+      display: none;
+      color: var(--accent-color);
+      font-style: italic;
+      margin-top: 1rem;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .error {
+      color: var(--error-color);
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid var(--error-color);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .output-box {
+      border-left: 4px solid var(--accent-color);
+      padding-left: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .output-item {
+      margin-bottom: 1.5rem;
+      animation: slideIn 0.4s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .output-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-color);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .output-content {
+      color: var(--text-color);
+      line-height: 1.8;
+      padding: 1rem;
+      background: rgba(56, 189, 248, 0.05);
+      border-radius: 6px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.75rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      select,
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>HAI-01</h1>
+      <p class="subtitle">Human Awakening Interface — Espejo Cognitivo & Autonomía Metacognitiva</p>
+      <div class="status-badge">🟢 Sistema Activo</div>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>Reflejo Cognitivo</h2>
+        <label for="inputObservation">Observación Inicial:</label>
+        <textarea id="inputObservation" placeholder="Escribe aquí tu pensamiento, situación o dilema a reflexionar..."></textarea>
+
+        <div class="controls">
+          <select id="processingStyle">
+            <option value="synthetic">Modo: Sintético / Directo</option>
+            <option value="high_detail">Modo: Enfoque Detallado</option>
+            <option value="low_stimulation">Modo: Baja Estimulación</option>
+          </select>
+          <button id="submitBtn" onclick="reflectObservation()">Procesar Reflejo</button>
+        </div>
+
+        <div class="loading" id="loading">Procesando reflexión...</div>
+        <div class="error" id="errorBox"></div>
+      </section>
+
+      <section class="card" id="resultCard" style="display: none;">
+        <h2>Resultado Metacognitivo</h2>
+        <div class="output-box">
+          <div class="output-item">
+            <div class="output-title">Percepción Filtrada (Neuro-Adaptada)</div>
+            <div class="output-content" id="outPerception"></div>
+          </div>
+          <div class="output-item">
+            <div class="output-title">Interpretación Semántica</div>
+            <div class="output-content" id="outInterpretation"></div>
+          </div>
+          <div class="output-item">
+            <div class="output-title">Intuición / Pregunta Introspectiva</div>
+            <div class="output-content" id="outIntuition"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>HAI-01 v1.0 | <a href="https://github.com/Ht3001/hai-01-cognitive-engine" target="_blank">GitHub</a> | Powered by FastAPI + Vue Espejo Cognitivo</p>
+    </footer>
+  </div>
+
+  <script>
+    // Configuración de API
+    const API_BASE = 'https://hai-01-cognitive-engine.onrender.com';
+    // Alternativas si Render no funciona:
+    // const API_BASE = 'https://api.ht3001.com';
+    // const API_BASE = 'http://localhost:8000';
+
+    function showError(message) {
+      const errorBox = document.getElementById('errorBox');
+      errorBox.textContent = '❌ ' + message;
+      errorBox.style.display = 'block';
+    }
+
+    function hideError() {
+      document.getElementById('errorBox').style.display = 'none';
+    }
+
+    async function reflectObservation() {
+      const input = document.getElementById('inputObservation').value.trim();
+      const style = document.getElementById('processingStyle').value;
+      const submitBtn = document.getElementById('submitBtn');
+      const loading = document.getElementById('loading');
+
+      if (!input) {
+        showError('Escribe una observación antes de procesarla.');
+        return;
+      }
+
+      hideError();
+      loading.style.display = 'block';
+      submitBtn.disabled = true;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/v1/perception`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            observation: input,
+            processing_style: style,
+            sensory_filtering: true,
+            neurodiversity_mode: 'standard'
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API respondió con estado ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        document.getElementById('outPerception').innerText = data.filtered_perception || `[Filtrado ${style}]: ${input}`;
+        document.getElementById('outInterpretation').innerText = data.semantic_interpretation || `Contextualización de: "${input}"`;
+        document.getElementById('outIntuition').innerText = data.intuition || `¿Qué patrón identificas?`;
+        document.getElementById('resultCard').style.display = 'block';
+
+        window.scrollTo({
+          top: document.getElementById('resultCard').offsetTop - 100,
+          behavior: 'smooth'
+        });
+      } catch (error) {
+        console.error('Error:', error);
+        showError(`No se pudo conectar con el backend. Verifica que esté disponible en: ${API_BASE}`);
+      } finally {
+        loading.style.display = 'none';
+        submitBtn.disabled = false;
+      }
+    }
+
+    // Permitir envío con Enter
+    document.getElementById('inputObservation').addEventListener('keydown', function(event) {
+      if (event.ctrlKey && event.key === 'Enter') {
+        reflectObservation();
+      }
+    });
+  </script>
+</body>
+
+</html>
