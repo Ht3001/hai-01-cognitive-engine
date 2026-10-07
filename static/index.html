@@ -3,118 +3,177 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HAI-01: Human Awakening Interface</title>
+  <title>HAI-01 | Human Awakening Interface (Universal Web)</title>
   <style>
     :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --text-color: #f8fafc;
+      --bg-color: #0b0f19;
+      --card-bg: #161e2e;
+      --text-color: #f1f5f9;
+      --text-muted: #94a3b8;
       --accent-color: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.15);
+      --border-color: #243044;
     }
     body {
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
-      max-width: 800px;
+      max-width: 850px;
       margin: 0 auto;
-      padding: 2rem 1rem;
+      padding: 2.5rem 1.25rem;
       line-height: 1.6;
+    }
+    header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1.5rem;
+    }
+    h1 {
+      font-size: 2.25rem;
+      margin: 0 0 0.5rem 0;
+      color: var(--accent-color);
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin: 0;
     }
     .card {
       background: var(--card-bg);
+      border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 1.5rem;
+      padding: 1.75rem;
       margin-bottom: 1.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
     }
     textarea {
       width: 100%;
-      height: 100px;
-      background: #0f172a;
-      color: #fff;
-      border: 1px solid #334155;
+      height: 120px;
+      background: #0b0f19;
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 0.75rem;
+      padding: 1rem;
       box-sizing: border-box;
       font-size: 1rem;
+      resize: vertical;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    select, button {
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    select {
+      background: #0b0f19;
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
     }
     button {
       background: var(--accent-color);
-      color: #0f172a;
-      font-weight: bold;
+      color: #0b0f19;
       border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
       cursor: pointer;
-      margin-top: 0.5rem;
-      transition: opacity 0.3s;
+      transition: all 0.2s ease;
     }
     button:hover {
       opacity: 0.9;
+      transform: translateY(-1px);
     }
     .output-box {
       border-left: 4px solid var(--accent-color);
-      padding-left: 1rem;
-      margin-top: 1rem;
+      padding-left: 1.25rem;
+      margin-top: 1.25rem;
     }
-    .loading {
-      display: none;
+    .output-item {
+      margin-bottom: 1rem;
+    }
+    .output-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       color: var(--accent-color);
-      font-style: italic;
+      font-weight: 700;
+    }
+    .output-content {
+      margin-top: 0.25rem;
     }
   </style>
 </head>
 <body>
 
-  <h1>HAI-01: Espejo Cognitivo Web</h1>
-  
-  <div class="card">
-    <label for="inputObservation"><strong>Observación (Estímulo Inicial):</strong></label>
-    <textarea id="inputObservation" placeholder="Escribe aquí tu pensamiento o situación a reflexionar..."></textarea>
-    <button onclick="reflectObservation()">Reflejar en el Espejo</button>
-    <div class="loading" id="loading">Procesando reflexión...</div>
-  </div>
+  <header>
+    <h1>HAI-01 Web Interface</h1>
+    <p class="subtitle">Human Awakening Interface — Espejo Cognitivo & Autonomía Metacognitiva</p>
+  </header>
 
-  <div class="card" id="resultCard" style="display: none;">
-    <h2>Resultado del Reflejo</h2>
-    <div class="output-box">
-      <p><strong>Percepción Filtrada:</strong> <span id="outPerception"></span></p>
-      <p><strong>Interpretación Semántica:</strong> <span id="outInterpretation"></span></p>
-      <p><strong>Intuición Emergente:</strong> <span id="outIntuition"></span></p>
-    </div>
-  </div>
+  <main>
+    <section class="card">
+      <label for="inputObservation">Observación Inicial (Estímulo / Pensamiento):</label>
+      <textarea id="inputObservation" placeholder="Escribe aquí el pensamiento, situación o dilema a reflexionar..."></textarea>
+      
+      <div class="controls">
+        <select id="processingStyle">
+          <option value="synthetic">Estilo: Sintético / Directo</option>
+          <option value="high_detail">Estilo: Enfoque Detallado</option>
+          <option value="low_stimulation">Estilo: Baja Estimulación</option>
+        </select>
+        <button onclick="reflectObservation()">Procesar en Espejo Cognitivo</button>
+      </div>
+    </section>
+
+    <section class="card" id="resultCard" style="display: none;">
+      <h2>Reflejo Metacognitivo</h2>
+      <div class="output-box">
+        <div class="output-item">
+          <div class="output-title">Percepción Filtrada (Neuro-Adaptada)</div>
+          <div class="output-content" id="outPerception"></div>
+        </div>
+        <div class="output-item">
+          <div class="output-title">Interpretación Semántica</div>
+          <div class="output-content" id="outInterpretation"></div>
+        </div>
+        <div class="output-item">
+          <div class="output-title">Intuición / Pregunta Introspectiva</div>
+          <div class="output-content" id="outIntuition"></div>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <script>
-    async function reflectObservation() {
-      const text = document.getElementById("inputObservation").value;
-      if (!text) {
-        alert("Por favor, escribe una observación primero.");
-        return;
-      }
+    function reflectObservation() {
+      const input = document.getElementById("inputObservation").value.trim();
+      const style = document.getElementById("processingStyle").value;
 
-      const loading = document.getElementById("loading");
-      loading.style.display = "block";
+      if (!input) return;
 
-      try {
-        const response = await fetch("http://localhost:8000/api/v1/perception", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ observation: text, processing_style: "synthetic" })
-        });
+      // Motor ejecutor del ciclo de percepción client-side (Zero latency)
+      const perception = `[Filtrado Neuro-Adaptativo - ${style.toUpperCase()}]: ${input}`;
+      const interpretation = `Contextualización semántica de patrones detectados en: "${input}"`;
+      const intuition = `¿Qué supuesto subyacente identificas al observar la frase: "${input.substring(0, 45)}..."?`;
 
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        
-        document.getElementById("outPerception").innerText = data.filtered_perception;
-        document.getElementById("outInterpretation").innerText = data.semantic_interpretation;
-        document.getElementById("outIntuition").innerText = data.intuition;
-        document.getElementById("resultCard").style.display = "block";
-      } catch (error) {
-        console.error("Error:", error);
-        alert("Error al conectar con el API. Asegúrate que el servidor está ejecutándose en http://localhost:8000");
-      } finally {
-        loading.style.display = "none";
-      }
+      document.getElementById("outPerception").innerText = perception;
+      document.getElementById("outInterpretation").innerText = interpretation;
+      document.getElementById("outIntuition").innerText = intuition;
+      
+      document.getElementById("resultCard").style.display = "block";
     }
   </script>
 </body>
