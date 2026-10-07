@@ -3,6 +3,8 @@ services:
     name: hai-01-cognitive-engine
     env: python
     plan: free
+    runtime: python
+    pythonVersion: "3.11"
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
