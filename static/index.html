@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HAI-01: Human Awakening Interface</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-color: #f8fafc;
+      --accent-color: #38bdf8;
+    }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      line-height: 1.6;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      background: #0f172a;
+      color: #fff;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 0.75rem;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+    button {
+      background: var(--accent-color);
+      color: #0f172a;
+      font-weight: bold;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: opacity 0.3s;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .output-box {
+      border-left: 4px solid var(--accent-color);
+      padding-left: 1rem;
+      margin-top: 1rem;
+    }
+    .loading {
+      display: none;
+      color: var(--accent-color);
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>HAI-01: Espejo Cognitivo Web</h1>
+  
+  <div class="card">
+    <label for="inputObservation"><strong>Observación (Estímulo Inicial):</strong></label>
+    <textarea id="inputObservation" placeholder="Escribe aquí tu pensamiento o situación a reflexionar..."></textarea>
+    <button onclick="reflectObservation()">Reflejar en el Espejo</button>
+    <div class="loading" id="loading">Procesando reflexión...</div>
+  </div>
+
+  <div class="card" id="resultCard" style="display: none;">
+    <h2>Resultado del Reflejo</h2>
+    <div class="output-box">
+      <p><strong>Percepción Filtrada:</strong> <span id="outPerception"></span></p>
+      <p><strong>Interpretación Semántica:</strong> <span id="outInterpretation"></span></p>
+      <p><strong>Intuición Emergente:</strong> <span id="outIntuition"></span></p>
+    </div>
+  </div>
+
+  <script>
+    async function reflectObservation() {
+      const text = document.getElementById("inputObservation").value;
+      if (!text) {
+        alert("Por favor, escribe una observación primero.");
+        return;
+      }
+
+      const loading = document.getElementById("loading");
+      loading.style.display = "block";
+
+      try {
+        const response = await fetch("http://localhost:8000/api/v1/perception", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ observation: text, processing_style: "synthetic" })
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        
+        document.getElementById("outPerception").innerText = data.filtered_perception;
+        document.getElementById("outInterpretation").innerText = data.semantic_interpretation;
+        document.getElementById("outIntuition").innerText = data.intuition;
+        document.getElementById("resultCard").style.display = "block";
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error al conectar con el API. Asegúrate que el servidor está ejecutándose en http://localhost:8000");
+      } finally {
+        loading.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>
